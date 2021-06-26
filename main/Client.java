@@ -1,8 +1,6 @@
 package main;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -13,48 +11,41 @@ import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.awt.event.ActionEvent;
 
-public class Client extends JFrame {
+public class Client extends JFrame implements Runnable {
 
 	private JPanel contentPane;
 	private JTextField msgText;
 	private static JTextArea chatArea;
 	private JButton btnSend;
 
-	static Socket socket;
+	static Socket client;
 	static DataInputStream input;
 	static DataOutputStream output;
 	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Client frame = new Client();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+	public void run() {
+		ConnectClient();
+	}
+	
+	public static void ConnectClient() {
 		String msgIn = "";		
 		try {
-			socket = new Socket("127.0.0.1", 10000);
-			input = new DataInputStream(socket.getInputStream());
-			output = new DataOutputStream(socket.getOutputStream());
+			client = new Socket("127.0.0.1", 10000);
+			input = new DataInputStream(client.getInputStream());
+			output = new DataOutputStream(client.getOutputStream());
 			
 			while (!msgIn.equals("exit")) {
 				msgIn = input.readUTF();
 				chatArea.setText(chatArea.getText().trim() + "\n" + msgIn);
 			}
+			output.close();
+			input.close();
+			client.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}	
 	}
 
 	/**
@@ -93,5 +84,9 @@ public class Client extends JFrame {
 		});
 		btnSend.setBounds(320, 197, 104, 38);
 		contentPane.add(btnSend);
+		
+		setLocationRelativeTo(null);
+		setResizable(false);
+		setVisible(true);
 	}
 }
