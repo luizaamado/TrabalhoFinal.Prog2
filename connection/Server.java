@@ -90,7 +90,6 @@ public class Server extends JFrame implements Runnable {
 		btnSend.setBounds(320, 197, 104, 38);
 		contentPane.add(btnSend);
 				
-		setLocationRelativeTo(null);
 		setResizable(false);
 		setVisible(true);
 	}
